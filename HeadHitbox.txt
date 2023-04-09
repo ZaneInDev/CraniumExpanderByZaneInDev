@@ -47,6 +47,7 @@ game:GetService('RunService').RenderStepped:connect(function()
                 NewHitbox(Character, v.TeamColor.Color)
             elseif DeathAnim then
 				local Character = v.Character or v.CharacterAdded:Wait()
+				local Head = Character:FindFirstChild("Head")
 				Character.Humanoid.Died:Connect(function()
 				    local RespawnTime = game:GetService('Players').RespawnTime
 				    local Tween = game:GetService('TweenService'):Create(Head, TweenInfo.new(RespawnTime, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = Vector3.new(0, 0, 0), Transparency = 1})
