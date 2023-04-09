@@ -1,6 +1,5 @@
-function NewHitbox(Character)
+function NewHitbox(Character, TeamColor)
     local Head = Character:FindFirstChild("Head")
-    local TeamColor = Character.TeamColor.Color
     local Humanoid = Character:FindFirstChild("Humanoid")
     local Torso = nil
                     
@@ -42,10 +41,10 @@ game:GetService('RunService').RenderStepped:connect(function()
         if v.Name ~= game:GetService('Players').LocalPlayer.Name then
             if TeamCheck and v.Team ~= localPlayerTeam then
                 local Character = v.Character or v.CharacterAdded:Wait()
-                NewHitbox(Character)
+                NewHitbox(Character, v.TeamColor.Color)
             elseif not TeamCheck then
                 local Character = v.Character or v.CharacterAdded:Wait()
-                NewHitbox(Character)
+                NewHitbox(Character, v.TeamColor.Color)
             end
         end
     end
