@@ -1,0 +1,52 @@
+function NewHitbox(Character)
+    local Head = Character:FindFirstChild("Head")
+    local TeamColor = Character.TeamColor.Color
+    local Humanoid = Character:FindFirstChild("Humanoid")
+    local Torso = nil
+                    
+    if Humanoid.RigType == Enum.HumanoidRigType.R15 then
+        Torso = Character:FindFirstChild("UpperTorso")
+    else
+        Torso = Character:FindFirstChild("Torso")
+    end
+
+    local ClonedHead = Torso:FindFirstChild("ClonedHead")
+                   
+    if not ClonedHead then
+        local NewHead = Head:Clone()
+        NewHead.Name = "ClonedHead"
+        NewHead.Parent = Torso
+
+        -- Remove decals from cloned head
+        for _, Decal in ipairs(NewHead:GetDescendants()) do
+            if Decal:IsA("Decal") then
+                Decal:Destroy()
+            end
+        end
+
+        for _, Children in ipairs(Head:GetChildren()) do
+            Children.Parent = NewHead
+        end
+
+        Head.Size = Vector3.new(HeadSize, HeadSize, HeadSize)
+        Head.Transparency = HeadTransparency
+        Head.Color = TeamColor
+        Head.CanCollide = false
+        Head.Massless = true
+    end
+end
+
+game:GetService('RunService').RenderStepped:connect(function()
+    local localPlayerTeam = game:GetService('Players').LocalPlayer.Team
+    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+        if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+            if TeamCheck and v.Team ~= localPlayerTeam then
+                local Character = v.Character or v.CharacterAdded:Wait()
+                NewHitbox(Character)
+            elseif not TeamCheck then
+                local Character = v.Character or v.CharacterAdded:Wait()
+                NewHitbox(Character)
+            end
+        end
+    end
+end)
