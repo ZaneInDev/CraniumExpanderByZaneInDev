@@ -30,7 +30,7 @@ function NewHitbox(Character, TeamColor)
         Head.Size = Vector3.new(HeadSize, HeadSize, HeadSize)
         Head.Transparency = HeadTransparency
         Head.Color = TeamColor
-        Head.Material= "Glass"
+        Head.Material= "ForceField"
         Head.CanCollide = false
         Head.Massless = true
     end
