@@ -2,7 +2,7 @@ function NewHitbox(Character, TeamColor)
     local Head = Character:FindFirstChild("Head")
     local Humanoid = Character:FindFirstChild("Humanoid")
     local Torso = nil
-                    
+
     if Humanoid.RigType == Enum.HumanoidRigType.R15 then
         Torso = Character:FindFirstChild("UpperTorso")
     else
@@ -10,7 +10,7 @@ function NewHitbox(Character, TeamColor)
     end
 
     local ClonedHead = Torso:FindFirstChild("ClonedHead")
-                   
+
     if not ClonedHead then
         local NewHead = Head:Clone()
         NewHead.Name = "ClonedHead"
@@ -29,25 +29,32 @@ function NewHitbox(Character, TeamColor)
 
         Head.Size = Vector3.new(HeadSize, HeadSize, HeadSize)
         Head.Color = TeamColor
-        Head.Material= "ForceField"
+        Head.Material = "ForceField"
         Head.Transparency = Transparency
         Head.CanCollide = false
         Head.Massless = true
     end
 end
 
-function UpdateCharacterHead(Character)
-    local Head = Character:FindFirstChild("Head")
-    if Head and Head:IsA("BasePart") and Head.Size == Vector3.new(HeadSize, HeadSize, HeadSize) then
-        Head.Color = Character.TeamColor.Color
-        Head.Material= "ForceField"
+game:GetService('RunService').RenderStepped:Connect(function()
+    local localPlayerTeam = game:GetService('Players').LocalPlayer.Team
+    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+        if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+            if TeamCheck and v.Team ~= localPlayerTeam then
+                local Character = v.Character or v.CharacterAdded:Wait()
+                NewHitbox(Character, v.TeamColor.Color)
+            elseif not TeamCheck then
+                local Character = v.Character or v.CharacterAdded:Wait()
+                NewHitbox(Character, v.TeamColor.Color)
+            end
+        end
     end
-end
+end)
 
-game:GetService('Players').PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(Character)
-        UpdateCharacterHead(Character)
-        if DeathAnim then
+if DeathAnim then
+    game:GetService('Players').PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function(Character)
+			local Character = v.Character or v.CharacterAdded:Wait()
             local Head = Character:FindFirstChild("Head")
             if Head and Head:IsA("BasePart") and Head.Size == Vector3.new(HeadSize, HeadSize, HeadSize) then
                 Character.Humanoid.Died:Connect(function()
@@ -58,19 +65,19 @@ game:GetService('Players').PlayerAdded:Connect(function(player)
                     Head.Transparency = 1
                 end)
             end
-        end
+        end)
     end)
-end)
+end
 
 game:GetService('RunService').RenderStepped:Connect(function()
-    local localPlayerTeam = game:GetService('Players').LocalPlayer.Team
-    for _, Character in ipairs(game:GetService('RunService'):GetRunningCharacterList()) do
-        if Character ~= game:GetService('Players').LocalPlayer.Character then
-            UpdateCharacterHead(Character)
-            if TeamCheck and Character.Team ~= localPlayerTeam then
-                NewHitbox(Character, Character.TeamColor.Color)
-            elseif not TeamCheck then
-                NewHitbox(Character, Character.TeamColor.Color)
+    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+        if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+            local Character = v.Character or v.CharacterAdded:Wait()
+            local Head = Character:FindFirstChild("Head")
+
+            if Head and Head.Size == Vector3.new(HeadSize, HeadSize, HeadSize) then
+                Head.Color = v.TeamColor.Color
+                Head.Material = "ForceField"
             end
         end
     end
