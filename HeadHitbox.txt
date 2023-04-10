@@ -36,24 +36,18 @@ function NewHitbox(Character, TeamColor)
     end
 end
 
-game:GetService('RunService').RenderStepped:Connect(function()
-    local localPlayerTeam = game:GetService('Players').LocalPlayer.Team
-    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
-        if v.Name ~= game:GetService('Players').LocalPlayer.Name then
-            if TeamCheck and v.Team ~= localPlayerTeam then
-                local Character = v.Character or v.CharacterAdded:Wait()
-                NewHitbox(Character, v.TeamColor.Color)
-            elseif not TeamCheck then
-                local Character = v.Character or v.CharacterAdded:Wait()
-                NewHitbox(Character, v.TeamColor.Color)
-            end
-        end
+function UpdateCharacterHead(Character)
+    local Head = Character:FindFirstChild("Head")
+    if Head and Head:IsA("BasePart") and Head.Size == Vector3.new(HeadSize, HeadSize, HeadSize) then
+        Head.Color = Character.TeamColor.Color
+        Head.Material= "ForceField"
     end
-end)
+end
 
-if DeathAnim then
-    game:GetService('Players').PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function(Character)
+game:GetService('Players').PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(Character)
+        UpdateCharacterHead(Character)
+        if DeathAnim then
             local Head = Character:FindFirstChild("Head")
             if Head and Head:IsA("BasePart") and Head.Size == Vector3.new(HeadSize, HeadSize, HeadSize) then
                 Character.Humanoid.Died:Connect(function()
@@ -62,22 +56,22 @@ if DeathAnim then
                     Tween:Play()
                     Head.Size = Vector3.new(0, 0, 0)
                     Head.Transparency = 1
-				end)
+                end)
             end
-        end)
+        end
     end)
-end
+end)
 
 game:GetService('RunService').RenderStepped:Connect(function()
-	local localPlayerTeam = game:GetService('Players').LocalPlayer.Team
-	for _, v in pairs(game:GetService('Players'):GetPlayers()) do
-        if v.Name ~= game:GetService('Players').LocalPlayer.Name then
-			local Character = v.Character or v.CharacterAdded:Wait()
-			local Head = Character:FindFirstChild("Head")
-			
-			if Head.Size == HeadSize then
-				Head.Color = v.TeamColor.Color
-			end
-		end
-	end
+    local localPlayerTeam = game:GetService('Players').LocalPlayer.Team
+    for _, Character in ipairs(game:GetService('RunService'):GetRunningCharacterList()) do
+        if Character ~= game:GetService('Players').LocalPlayer.Character then
+            UpdateCharacterHead(Character)
+            if TeamCheck and Character.Team ~= localPlayerTeam then
+                NewHitbox(Character, Character.TeamColor.Color)
+            elseif not TeamCheck then
+                NewHitbox(Character, Character.TeamColor.Color)
+            end
+        end
+    end
 end)
