@@ -34,7 +34,7 @@ RunService.RenderStepped:Connect(function()
 				Head.Size = Vector3.new(HeadSize, HeadSize, HeadSize)
 				Head.Material = "ForceField"
 				Head.Transparency = Transparency
-				Head.Color = v.TeamColor.Color
+				Head.Color = Player.TeamColor.Color
 				Head.CanCollide = false
 				Head.Massless = true
 
