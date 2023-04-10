@@ -6,7 +6,7 @@ function NewHitbox(Character, TeamColor)
     if Humanoid.RigType == Enum.HumanoidRigType.R15 then
         Torso = Character:FindFirstChild("UpperTorso")
     else
-        Torso = Character:FindFirstChild("Torso")
+        Torso = Character["Torso"]
     end
 
     local ClonedHead = Torso:FindFirstChild("ClonedHead")
