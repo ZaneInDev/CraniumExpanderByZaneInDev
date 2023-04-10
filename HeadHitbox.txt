@@ -9,17 +9,10 @@ RunService.RenderStepped:Connect(function()
                 local Character = Player.Character or Player.CharacterAdded:Wait()
                 local Head = Character:FindFirstChild("Head")
                 local Humanoid = Character:FindFirstChild("Humanoid")
-                local Torso = nil
+                local Torso = Character:FindFirstChild("UpperTorso")
+				local ClonedHead = Torso:FindFirstChild("ClonedHead")
 
-                if Humanoid.RigType == Enum.HumanoidRigType.R15 then
-                    Torso = Character:FindFirstChild("UpperTorso")
-                else
-                    Torso = Character:FindFirstChild("Torso")
-                end
-
-                local ClonedHead = Torso:FindFirstChild("ClonedHead")
-
-                if not ClonedHead then
+                if not ClonedHead and Humanoid.RigType == Enum.HumanoidRigType.R15 then
                     local NewHead = Head:Clone()
                     NewHead.Name = "ClonedHead"
                     NewHead.Parent = Torso
@@ -30,24 +23,20 @@ RunService.RenderStepped:Connect(function()
                             Decal:Destroy()
                         end
                     end
-
-                    -- Remove decals from original head
-                    for _, Decal in ipairs(Head:GetDescendants()) do
-                        if Decal:IsA("Decal") then
-                            Decal:Destroy()
-                        end
-                    end
-
-                    if Head.Size == Vector3.new(HeadSize, HeadSize, HeadSize) then
-                        Head.Material = "ForceField"
-                        Head.Transparency = Transparency
-						Head.Color = v.TeamColor.Color
-                        Head.CanCollide = false
-                        Head.Massless = true
-                    else
-                        Head.Size = Vector3.new(HeadSize, HeadSize, HeadSize)
-                    end
-                end
+				end
+		
+				for _, Decal in ipairs(Head:GetDescendants()) do
+					if Decal:IsA("Decal") then
+						Decal:Destroy()
+					end
+				end
+			
+				Head.Size = Vector3.new(HeadSize, HeadSize, HeadSize)
+				Head.Material = "ForceField"
+				Head.Transparency = Transparency
+				Head.Color = v.TeamColor.Color
+				Head.CanCollide = false
+				Head.Massless = true
 
 				if DeathAnim then
 					Character.Humanoid.Died:Connect(function()
